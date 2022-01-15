@@ -19209,6 +19209,11 @@ marked@^1.1.1:
   resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.9.tgz#53786f8b05d4c01a2a5a76b7d1ec9943d29d72dc"
   integrity sha512-H8lIX2SvyitGX+TRdtS06m1jHMijKN/XjfH6Ooii9fvxMlh8QdqBfBDkGUpMWH2kQNrtixjzYUa3SH8ROTgRRw==
 
+marked@^4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.10.tgz#423e295385cc0c3a70fa495e0df68b007b879423"
+  integrity sha512-+QvuFj0nGgO970fySghXGmuw+Fd0gD2x3+MqCWLIPf5oxdv1Ka6b2q+z9RP01P/IaKPMEramy+7cNy/Lw8c3hw==
+
 matcher@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/matcher/-/matcher-3.0.0.tgz#bd9060f4c5b70aa8041ccc6f80368760994f30ca"
@@ -28738,6 +28743,7 @@ warning@^4.0.1, warning@^4.0.2, warning@^4.0.3:
 
 "warthog@https://github.com/Joystream/warthog/releases/download/v2.37.0/joystream-warthog-v2.37.0.tgz", "warthog@https://github.com/Joystream/warthog/releases/download/v2.37.3-sumer/joystream-warthog-v2.37.3-sumer.tgz", "warthog@https://github.com/metmirr/warthog/releases/download/v2.23.0/warthog-v2.23.0.tgz":
   version "2.37.3-sumer"
+  uid "6830f1ab694414cfdbeee664057d308768b1b3ba"
   resolved "https://github.com/Joystream/warthog/releases/download/v2.37.3-sumer/joystream-warthog-v2.37.3-sumer.tgz#6830f1ab694414cfdbeee664057d308768b1b3ba"
   dependencies:
     "@apollographql/graphql-playground-react" "https://github.com/Joystream/graphql-playground/releases/download/joystream%401.7.28/graphql-playground-react-v1.7.28.tgz"
