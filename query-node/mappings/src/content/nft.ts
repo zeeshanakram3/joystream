@@ -91,7 +91,6 @@ async function getCurrentAuctionFromVideo(
   // load video
   const video = await getRequiredExistingEntity(store, Video, videoId.toString(), errorMessageForVideo, [
     'nft',
-    'nft.transactionalStatusAuction',
     ...nftRelations.map((item) => `nft.${item}`),
     'nft.auctions',
     ...auctionRelations.map((item) => `nft.auctions.${item}`),
@@ -109,8 +108,8 @@ async function getCurrentAuctionFromVideo(
     ? allAuctions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[allAuctions.length - 1]
     : null
 
-  // ensure current auction exists
-  if (!auction || auction.id !== nft.transactionalStatusAuction?.id) {
+  // ensure auction exists
+  if (!auction) {
     return inconsistentState(errorMessageForAuction, videoId)
   }
 
@@ -797,37 +796,31 @@ export async function contentNft_AuctionBidCanceled({ event, store }: EventConte
 
   // specific event processing
 
-  const bid = await store.get(Bid, {
-    where: { bidder: { id: memberId }, nft: { id: videoId } },
-    relations: [
-      'nft',
-      'nft.video',
-      'nft.ownerMember',
-      'nft.ownerCuratorGroup',
-      'auction',
-      'auction.topBid',
-      'auction.bids',
-      'auction.bids.bidder',
-    ],
-  })
+  // load video and auction
+  const { video, auction, nft } = await getCurrentAuctionFromVideo(
+    store,
+    videoId.toString(),
+    'Non-existing video got bid canceled',
+    'Non-existing NFT got bid canceled',
+    'Non-existing auction got bid canceled',
+    ['ownerMember', 'ownerCuratorGroup'],
+    ['topBid', 'bids', 'bids.bidder']
+  )
+
+  // retrieve relevant bid
+  const bid = (auction.bids || []).find((bid) => !bid.isCanceled && bid.bidder.id.toString() === memberId.toString())
 
   // ensure bid exists
   if (!bid) {
-    return inconsistentState('Non-existing bid got canceled')
+    return inconsistentState('Non-existing bid got canceled', { auction: auction.id.toString(), memberId })
   }
-
-  // load auction and video
-  const {
-    auction,
-    nft: { video, ownerMember, ownerCuratorGroup, transactionalStatusAuction },
-  } = bid
 
   bid.isCanceled = true
 
   // save bid
   await store.save<Bid>(bid)
 
-  if (transactionalStatusAuction && auction.topBid && bid.id.toString() === auction.topBid.id.toString()) {
+  if (auction.topBid && bid.id.toString() === auction.topBid.id.toString()) {
     // find new top bid
     auction.topBid = findTopBid(auction.bids || [])
 
@@ -842,8 +835,8 @@ export async function contentNft_AuctionBidCanceled({ event, store }: EventConte
 
     member: new Membership({ id: memberId.toString() }),
     video,
-    ownerMember,
-    ownerCuratorGroup,
+    ownerMember: nft.ownerMember,
+    ownerCuratorGroup: nft.ownerCuratorGroup,
   })
 
   await store.save<AuctionBidCanceledEvent>(announcingPeriodStartedEvent)
